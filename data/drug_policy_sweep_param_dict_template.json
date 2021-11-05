@@ -1,0 +1,20 @@
+{  
+    "user_parameters.time_add_tnf": {
+        "min":20, 
+        "max":800, 
+        "loc":200, 
+        "scale":50.0 
+    },
+    "user_parameters.duration_add_tnf": { 
+        "min":5,
+        "max":120,
+        "loc":30,
+        "scale":15 
+    },
+    "user_parameters.concentration_tnf": {
+        "min":0.02,
+        "max":0.08,
+        "loc":0.05,
+        "scale":0.1
+    }
+}

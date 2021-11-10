@@ -52,20 +52,22 @@ export PYTHONPATH=$EMEWS_PROJECT_ROOT/python
 # command line arguments to the swift script.
 mkdir -p $TURBINE_OUTPUT
 
-
-EXECUTABLE_SOURCE=$EMEWS_PROJECT_ROOT/data/PhysiBoSSv2/spheroid_TNF_v2
-DEFAULT_XML_SOURCE=$EMEWS_PROJECT_ROOT/data/PhysiBoSSv2/config/*
 PARAMS_FILE_SOURCE=$2
+EXE_SOURCE=$EMEWS_PROJECT_ROOT/model/tnf-cancer-model
+SETTINGS_SOURCE=$EMEWS_PROJECT_ROOT/data/settings_template_2D.xml
 
-EXECUTABLE_OUT=$TURBINE_OUTPUT/$(basename $EXECUTABLE_SOURCE)
-DEFAULT_XML_OUT=$TURBINE_OUTPUT
-PARAMS_FILE_OUT=$TURBINE_OUTPUT/$(basename $PARAMS_FILE_SOURCE)
+EXE_OUT=$TURBINE_OUTPUT/`basename $EXE_SOURCE`
+SETTINGS_OUT=$TURBINE_OUTPUT/settings.xml
+PARAMS_FILE_OUT=$TURBINE_OUTPUT/`basename $PARAMS_FILE_SOURCE`
 
-cp $EXECUTABLE_SOURCE $EXECUTABLE_OUT
-cp -r $DEFAULT_XML_SOURCE $DEFAULT_XML_OUT
+cp $EXE_SOURCE $EXE_OUT
+cp $SETTINGS_SOURCE $SETTINGS_OUT
 cp $PARAMS_FILE_SOURCE $PARAMS_FILE_OUT
 
-CMD_LINE_ARGS="$* -exe=$EXECUTABLE_OUT -settings=$DEFAULT_XML_OUT/PhysiCell_settings.xml -parameters=$PARAMS_FILE_OUT"
+cp -r $EMEWS_PROJECT_ROOT/data/boolean_network $TURBINE_OUTPUT
+
+
+CMD_LINE_ARGS="$* -exe=$EXE_OUT -settings=$SETTINGS_OUT -parameters=$PARAMS_FILE_OUT"
 
 # set machine to your schedule type (e.g. pbs, slurm, cobalt etc.),
 # or empty for an immediate non-queued unscheduled run

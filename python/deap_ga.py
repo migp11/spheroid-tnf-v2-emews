@@ -6,7 +6,6 @@ import csv
 import json
 import sys
 import pickle
-import logging
 import os
 
 import numpy as np
@@ -18,10 +17,6 @@ from deap import algorithms
 
 import eqpy, ga_utils
 
-experiment_folder = os.getenv('TURBINE_OUTPUT')
-checkpoint_file_input = os.getenv('CHECKPOINT_FILE')
-checkpoint_file = os.path.join(experiment_folder,"ga_checkpoint.pkl")
-logging.basicConfig(format='%(message)s',filename=os.path.join(experiment_folder,"generations.log"),level=logging.DEBUG)
 # list of ga_utils parameter objects
 transformer = None
 
@@ -133,77 +128,6 @@ def cxUniform(ind1, ind2, indpb):
 def timestamp(scores):
     return str(time.time())
 
-def eaSimpleExtended(population, toolbox, cxpb, mutpb, ngen, stats=None,
-             halloffame=None, verbose=__debug__, checkpoint=None):
-    # If previous sim has failed, or we want to continue from previous generation
-    if checkpoint:
-        # A file name has been given, then load the data from the file
-        with open(checkpoint, "rb") as cp_file:
-            cp = pickle.load(cp_file)
-        population = cp["population"]
-        #start_gen = cp["generation"]
-        halloffame = cp["halloffame"]
-        logbook = cp["logbook"]
-        random.setstate(cp["rndstate"])
-    else:
-        logbook = tools.Logbook()
-        logbook.header = ['gen', 'nevals'] + (stats.fields if stats else [])
-
-    # Evaluate the individuals with an invalid fitness
-    invalid_ind = [ind for ind in population if not ind.fitness.valid]
-    fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
-    for ind, fit in zip(invalid_ind, fitnesses):
-        ind.fitness.values = fit
-
-    if halloffame is not None:
-        halloffame.update(population)
-
-    record = stats.compile(population) if stats else {}
-    logbook.record(gen=0, nevals=len(invalid_ind), **record)
-    if verbose:
-        printf("Logbookstream: {}\nhalloffame: {}\n".format(logbook.stream, halloffame))
-        for p in population:
-            logging.debug("0, {}, {}, {}".format(0, p, p.fitness))
-
-    # Begin the generational process
-    for gen in range(1, ngen + 1):
-        # Select the next generation individuals
-        offspring = toolbox.select(population, len(population))
-
-        # Vary the pool of individuals
-        offspring = algorithms.varAnd(offspring, toolbox, cxpb, mutpb)
-
-        # Evaluate the individuals with an invalid fitness
-        invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
-        fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
-        for ind, fit in zip(invalid_ind, fitnesses):
-            ind.fitness.values = fit
-
-        # Update the hall of fame with the generated individuals
-        if halloffame is not None:
-            halloffame.update(offspring)
-
-        # Replace the current population by the offspring
-        population[:] = offspring
-
-        # Append the current generation statistics to the logbook
-        record = stats.compile(population) if stats else {}
-        logbook.record(gen=gen, nevals=len(invalid_ind), **record)
-        # Fill the dictionary using the dict(key=value[, ...]) constructor
-        cp = dict(population=population, generation=gen, halloffame=halloffame,
-                   logbook=logbook, rndstate=random.getstate())
-        with open(checkpoint_file, "wb") as cp_file:
-            pickle.dump(cp, cp_file)
-        logging.info("Generation {} Stored at {}".format(gen, time.strftime("%H:%M:%S", time.localtime())))
-        if verbose:
-            printf("Logbookstream: {}\nhalloffame: {}\n".format(logbook.stream, halloffame))
-            for p in population:
-                logging.debug("0, {}, {}, {}".format(gen, p, p.fitness))
-            for h in halloffame:
-                logging.debug("-1, {}, {}, {}".format(gen, h, h.fitness))
-    logging.info("{}\n".format(logbook.stream))
-    return population, logbook
-
 def run():
     """
     :param num_iterations: number of generations
@@ -213,12 +137,9 @@ def run():
     """
     eqpy.OUT_put("Params")
     parameters = eqpy.IN_get()
+
     # parse params
     printf("Parameters: {}".format(parameters))
-    logging.info("Parameters: {}".format(parameters))
-    distance_type_id = os.getenv('DISTANCE_TYPE_ID')
-    logging.info("Distance type - [{}]\tCheckpoint file: {}\n".format(distance_type_id,checkpoint_file_input))
-    logging.info("Begin at: {}".format(time.strftime("%H:%M:%S", time.localtime())))
     (num_iterations, num_population, seed, ga_parameters_file) = eval('{}'.format(parameters))
     random.seed(seed)
     ga_parameters = ga_utils.create_parameters(ga_parameters_file)
@@ -251,20 +172,16 @@ def run():
     stats.register("max", np.max)
     stats.register("ts", timestamp)
 
+    # num_iter-1 generations since the initial population is evaluated once first
     start_time = time.time()
-    pop, log = eaSimpleExtended(pop, toolbox, cxpb=0.5, mutpb=0.2, ngen=num_iterations, stats=stats, halloffame=hof, verbose=True, checkpoint=checkpoint_file_input)
+    pop, log = algorithms.eaSimple(pop, toolbox, cxpb=0.5, mutpb=0.2, ngen=num_iterations - 1, stats=stats, halloffame=hof, verbose=True)
 
     end_time = time.time()
 
     fitnesses = [str(p.fitness.values[0]) for p in pop]
 
-    logging.info("\n Hall of Fame: \n")
-    logging.info("End at: {}".format(time.strftime("%H:%M:%S", time.localtime())))
-    for h in hof:
-        logging.debug("-1, {}, {}, {}".format(-1, h, h.fitness))
-
     eqpy.OUT_put("DONE")
+
     # return the final population
-    eqpy.OUT_put("{}\n{}\n{}\n{}\n{}".format(create_list_of_json_strings(pop), ';'.join(fitnesses),
-        start_time, log, end_time))
+    eqpy.OUT_put(create_list_of_json_strings([hof[0]]))
 

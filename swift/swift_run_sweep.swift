@@ -25,10 +25,8 @@ params2xml.params_to_xml(params, default_settings, xml_out)
 string count_template =
 """
 import get_metrics
-
 instance_dir = '%s'
-# '30240'
-count = get_metrics.get_custom_cell_count(instance_dir)
+count = get_metrics.get_tumor_cell_count(instance_dir)
 """;
 
 string find_min =
@@ -79,6 +77,7 @@ main() {
   string upf_lines[] = file_lines(upf);
   foreach params,i in upf_lines {
     string instance_dir = "%s/instance_%i/" % (turbine_output, i+1);
+    printf(params);
     make_dir(instance_dir) => {
       make_output_dir(instance_dir) => {
         string xml_out = instance_dir + "settings.xml";

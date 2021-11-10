@@ -265,18 +265,7 @@
 		<time_add_tnf type="int" units="min">275.3250913137699</time_add_tnf> 
 		<duration_add_tnf type="int" units="min">25.002361867460017</duration_add_tnf> 
 		<concentration_tnf type="double" units="TNF/um^3">0.039</concentration_tnf> 
-
-<!-- 		
-		<time_add_tnf type="int" units="min">234.61538461538464</time_add_tnf> 
-		<duration_add_tnf type="int" units="min">110.0</duration_add_tnf> 
-		<concentration_tnf type="double" units="TNF/um^3">0.04</concentration_tnf>  
--->
-
-<!-- 
-		<time_add_tnf type="int" units="min">150</time_add_tnf> 
-		<duration_add_tnf type="int" units="min">15</duration_add_tnf> 
-		<concentration_tnf type="double" units="TNF/um^3">0.03902220989412398</concentration_tnf> 
- -->		
+		
 		<time_remove_tnf type="int" units="min">100000</time_remove_tnf> 
 		<membrane_length type="int" units=""> 470 </membrane_length>
 

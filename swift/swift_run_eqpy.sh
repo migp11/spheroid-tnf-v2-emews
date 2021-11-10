@@ -4,7 +4,7 @@ set -eu
 
 if [ "$#" -ne 2 ]; then
   script_name=$(basename $0)
-  echo "Usage: ${script_name} EXPERIMENT_ID GA_PARAMS_FILE (e.g. ${script_name} experiment_1 data/ga_params.json)"
+  echo "Usage: ${script_name} EXPERIMENT_ID EA_PARAMS_FILE (e.g. ${script_name} experiment_1 data/ga_params.json)"
   exit 1
 fi
 
@@ -21,14 +21,14 @@ export TURBINE_OUTPUT=$EMEWS_PROJECT_ROOT/experiments/$EXPID
 check_directory_exists
 
 # TODO edit the number of processes as required.
-export PROCS=180
+export PROCS=90
 
 # TODO edit QUEUE, WALLTIME, PPN, AND TURNBINE_JOBNAME
 # as required. Note that QUEUE, WALLTIME, PPN, AND TURNBINE_JOBNAME will
 # be ignored if MACHINE flag (see below) is not set
 export QUEUE=main
-export WALLTIME=72:00:00
-export PPN=6
+export WALLTIME=48:00:00
+export PPN=12
 export TURBINE_JOBNAME="${EXPID}_job"
 
 # Extra argument passed to SLURM script
@@ -53,24 +53,31 @@ EQPY=$EMEWS_PROJECT_ROOT/ext/EQ-Py
 # command line arguments to the swift script
 mkdir -p $TURBINE_OUTPUT
 
-EXECUTABLE_SOURCE=$EMEWS_PROJECT_ROOT/data/PhysiBoSSv2/spheroid_TNF_v2
-DEFAULT_XML_SOURCE=$EMEWS_PROJECT_ROOT/data/PhysiBoSSv2/config/*
-GA_PARAMS_FILE_SOURCE=$2
+ALGO_PARAMS_FILE_SOURCE=$2
+EXE_SOURCE=$EMEWS_PROJECT_ROOT/model/tnf-cancer-model
+SETTINGS_SOURCE=$EMEWS_PROJECT_ROOT/data/settings_template_2D.xml
 
-EXECUTABLE_OUT=$TURBINE_OUTPUT/spheroid_TNF
-DEFAULT_XML_OUT=$TURBINE_OUTPUT
-GA_PARAMS_FILE_OUT=$TURBINE_OUTPUT/TNF_v2_ga_params.json
+EXE_OUT=$TURBINE_OUTPUT/`basename $EXE_SOURCE`
+SETTINGS_OUT=$TURBINE_OUTPUT/settings.xml
+ALGO_PARAMS_FILE_OUT=$TURBINE_OUTPUT/`basename $2`
 
-cp $EXECUTABLE_SOURCE $EXECUTABLE_OUT
-cp -r $DEFAULT_XML_SOURCE $DEFAULT_XML_OUT
-cp $GA_PARAMS_FILE_SOURCE $GA_PARAMS_FILE_OUT
+cp $EXE_SOURCE $EXE_OUT
+cp $SETTINGS_SOURCE $SETTINGS_OUT
+cp $ALGO_PARAMS_FILE_SOURCE $ALGO_PARAMS_FILE_OUT
+
+cp -r $EMEWS_PROJECT_ROOT/data/boolean_network $TURBINE_OUTPUT
 
 SEED=1234
-ITERATIONS=60
-REPLICATIONS=1
-NUM_POPULATION=300
+ITER=30
+REP=1
+POP=100
+SIGMA=1
 
-CMD_LINE_ARGS="$* -seed=$SEED -ni=$ITERATIONS -nv=$REPLICATIONS -np=$NUM_POPULATION -exe=$EXECUTABLE_OUT -settings=$DEFAULT_XML_OUT/PhysiCell_settings.xml -ga_parameters=$GA_PARAMS_FILE_OUT"
+STRATEGY="CMA"
+#STRATEGY="GA"
+
+
+CMD_LINE_ARGS="$* -strategy=$STRATEGY -sigma=$SIGMA -seed=$SEED -ni=$ITER -nv=$REP -np=$POP -exe=$EXE_OUT -settings=$SETTINGS_OUT -ea_params=$ALGO_PARAMS_FILE_OUT"
 
 # Uncomment this for the BG/Q:
 #export MODE=BGQ QUEUE=default

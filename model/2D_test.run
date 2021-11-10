@@ -1,4 +1,0 @@
-make data-cleanup
-./spheroid_TNF_v2 config/settings_template_2D.xml 
-cp config/settings_template_2D.xml output/settings.xml
-python ./python/summarize_simulation.py output/

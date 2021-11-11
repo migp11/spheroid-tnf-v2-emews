@@ -16,6 +16,31 @@ string turbine_output = getenv("TURBINE_OUTPUT");
 string resident_work_ranks = getenv("RESIDENT_WORK_RANKS");
 string r_ranks[] = split(resident_work_ranks,",");
 
+string_summarize_sim = 
+"""
+import os
+import json
+
+params = json.loads('%s')
+instance_folder = '%s'
+
+params['initial_cell_count'] =  -1
+params['final_cell_count'] = -1
+fname = os.path.join(instance_folder, 'metrics.txt')
+if os.path.exists(fname):
+    file_lines = []
+    with open(fname) as fh:
+        lines = [i.rstrip() for i in fh.readlines()]
+
+    params['initial_cell_count'] = lines[0].split("\t")[1]
+    params['final_cell_count'] = lines[-1].split("\t")[1]
+
+fname = os.path.join(instance_folder, 'sim_summary.json')
+with open(fname, 'w') as fh:
+    json.dump(params, fh)
+"""
+
+
 string to_xml_code =
 """
 import params2xml
@@ -93,12 +118,14 @@ app (void o) make_dir(string dirname) {
         
         // replication iteration used as a seed
         string code = to_xml_code % (custom_parameters, replication, default_settings, instance_settings);
+        
         python_persist(code, "'ignore'") =>
         (out,err) = run_model(model_sh, executable, instance_settings, instance_dir) => {
           cell_counts[replication] = get_result(instance_dir);
-          summarize_simulation (summarize_py, instance_dir) => {
-            rm_dir(instance_dir + "output/");
-          }
+          string code_summarize = string_summarize_sim % (custom_parameters, instance_dir);
+          python_persist(code_summarize, "'ignore'") =>
+          summarize_simulation (summarize_py, instance_dir) =>
+          rm_dir(instance_dir + "output/");
         }
       }
     }

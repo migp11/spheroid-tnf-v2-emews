@@ -21,18 +21,18 @@ export TURBINE_OUTPUT=$EMEWS_PROJECT_ROOT/experiments/$EXPID
 check_directory_exists
 
 # TODO edit the number of processes as required.
-export PROCS=90
+export PROCS=36
 
 # TODO edit QUEUE, WALLTIME, PPN, AND TURNBINE_JOBNAME
 # as required. Note that QUEUE, WALLTIME, PPN, AND TURNBINE_JOBNAME will
 # be ignored if MACHINE flag (see below) is not set
 export QUEUE=main
-export WALLTIME=48:00:00
+export WALLTIME=2:00:00
 export PPN=12
 export TURBINE_JOBNAME="${EXPID}_job"
 
 # Extra argument passed to SLURM script
-# export TURBINE_SBATCH_ARGS=--qos=debug
+export TURBINE_SBATCH_ARGS=--qos=debug
 
 # if R cannot be found, then these will need to be
 # uncommented and set correctly.
@@ -68,12 +68,13 @@ cp $ALGO_PARAMS_FILE_SOURCE $ALGO_PARAMS_FILE_OUT
 cp -r $EMEWS_PROJECT_ROOT/data/boolean_network $TURBINE_OUTPUT
 
 SEED=1234
-ITER=30
-REP=1
+ITER=20
+REP=3
 POP=100
 SIGMA=1
 
 STRATEGY="CMA"
+
 #STRATEGY="GA"
 
 
@@ -97,6 +98,8 @@ fi
 USER_VARS=()
 # log variables and script to to TURBINE_OUTPUT directory
 log_script
+
+module load python java R/3.4.0 swiftt/1.4.3
 
 # echo's anything following this to standard out
 set -x

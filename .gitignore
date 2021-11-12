@@ -53,3 +53,8 @@ turbine-output
 .vscode
 
 python/__pycache__
+
+
+model/addons/PhysiBoSS/MaBoSS-env-2.0/
+model/tnf-cancer-model
+ext/EQ-Py/__pycache__/

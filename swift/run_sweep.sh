@@ -66,8 +66,9 @@ cp $PARAMS_FILE_SOURCE $PARAMS_FILE_OUT
 
 cp -r $EMEWS_PROJECT_ROOT/data/boolean_network $TURBINE_OUTPUT
 
+REP=3
 
-CMD_LINE_ARGS="$* -exe=$EXE_OUT -settings=$SETTINGS_OUT -parameters=$PARAMS_FILE_OUT"
+CMD_LINE_ARGS="$* -nv=$REP -exe=$EXE_OUT -settings=$SETTINGS_OUT -parameters=$PARAMS_FILE_OUT"
 
 # set machine to your schedule type (e.g. pbs, slurm, cobalt etc.),
 # or empty for an immediate non-queued unscheduled run

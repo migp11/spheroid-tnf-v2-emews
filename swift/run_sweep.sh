@@ -89,4 +89,4 @@ log_script
 # echo's anything following this standard out
 set -x
 SWIFT_FILE=swift_run_sweep.swift
-swift-t -n $PROCS $MACHINE -p $EMEWS_PROJECT_ROOT/swift/$SWIFT_FILE $CMD_LINE_ARGS
+swift-t -n $PROCS $MACHINE -p -I $EMEWS_PROJECT_ROOT/swift/ $EMEWS_PROJECT_ROOT/swift/$SWIFT_FILE $CMD_LINE_ARGS

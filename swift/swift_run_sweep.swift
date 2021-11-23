@@ -3,48 +3,13 @@ import sys;
 import files;
 import string;
 import python;
-// import R;
+
+import swift_utils;
+
 
 string emews_root = getenv("EMEWS_PROJECT_ROOT");
 string turbine_output = getenv("TURBINE_OUTPUT");
 
-string summarize_sim = 
-"""
-import os
-import json
-
-params = json.loads('%s')
-instance_folder = '%s'
-
-params['initial_cell_count'] =  -1
-params['final_cell_count'] = -1
-fname = os.path.join(instance_folder, 'metrics.txt')
-if os.path.exists(fname):
-    file_lines = []
-    with open(fname) as fh:
-        lines = [i.rstrip() for i in fh.readlines()]
-
-    params['initial_cell_count'] = lines[0].split("\t")[1]
-    params['final_cell_count'] = lines[-1].split("\t")[1]
-
-fname = os.path.join(instance_folder, 'sim_summary.json')
-with open(fname, 'w') as fh:
-    json.dump(params, fh)
-""";
-
-string to_xml_code =
-"""
-import params2xml
-import json
-
-params = json.loads('%s')
-params['user_parameters.random_seed'] = '%s'
-
-default_settings = '%s'
-xml_out = '%s'
-
-params2xml.params_to_xml(params, default_settings, xml_out)
-""";
 
 string count_template =
 """
@@ -103,39 +68,18 @@ main() {
   foreach params,i in upf_lines {
     foreach replication in [0:num_variations-1:1] {
       string instance_dir = "%s/instance_%i_%i/" % (turbine_output, i+1, replication+1);
-      printf(params);
-      make_dir(instance_dir) => {
-        make_output_dir(instance_dir) => {
-          string xml_out = instance_dir + "settings.xml";
-          string code = to_xml_code % (params, i, default_xml, xml_out);
-          file out <instance_dir+"out.txt">;
-          file err <instance_dir+"err.txt">;
-          python_persist(code, "'ignore'") => {
-            (out,err) = run_model(model_sh, executable, xml_out, instance_dir) => {
-              // results[i] = get_result(instance_dir);
-              results[replication] = get_result(instance_dir);
-              string code_summarize = summarize_sim % (
-              params, instance_dir);
-              python_persist(code_summarize, "'ignore'") =>
-              summarize_simulation (summarize_py, instance_dir) => {
-                rm_dir(instance_dir + "output/");
-              } 
-            }
-          }
+      make_dir(instance_dir) => {        
+        file out <instance_dir+"out.txt">;
+        file err <instance_dir+"err.txt">;
+        string xml_out = instance_dir + "settings.xml" =>
+        params2xml(params, i+replication, default_xml, xml_out) =>
+        (out,err) = run_model(model_sh, executable, xml_out, instance_dir) => {
+          results[replication] = get_result(instance_dir);
+          results2json(params, instance_dir) =>
+          summarize_simulation (summarize_py, instance_dir) =>
+          rm_dir(instance_dir + "output/");
         }
       }
     }
   }
-
-  // string results_str = string_join(results, ",");
-  // string code = find_min % results_str;
-  // string mins = R(code, "toString(res)");
-  // string min_idxs[] = split(mins, ",");
-  // string best_params[];
-  // foreach s, i in min_idxs {
-    // int idx = toint(trim(s));
-    // best_params[i] = upf_lines[idx - 1];
-  // }
-  //file best_out <turbine_output + "/output/best_parameters.txt"> =
-  //  write(string_join(best_params, "\n"));
 }

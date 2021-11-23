@@ -7,8 +7,8 @@ import python;
 import math;
 import location;
 import assert;
-// import R;
 
+import swift_utils;
 import EQPy;
 
 string emews_root = getenv("EMEWS_PROJECT_ROOT");
@@ -16,44 +16,9 @@ string turbine_output = getenv("TURBINE_OUTPUT");
 string resident_work_ranks = getenv("RESIDENT_WORK_RANKS");
 string r_ranks[] = split(resident_work_ranks,",");
 
-string summarize_sim = 
-"""
-import os
-import json
-
-params = json.loads('%s')
-instance_folder = '%s'
-
-params['initial_cell_count'] =  -1
-params['final_cell_count'] = -1
-fname = os.path.join(instance_folder, 'metrics.txt')
-if os.path.exists(fname):
-    file_lines = []
-    with open(fname) as fh:
-        lines = [i.rstrip() for i in fh.readlines()]
-
-    params['initial_cell_count'] = lines[0].split("\t")[1]
-    params['final_cell_count'] = lines[-1].split("\t")[1]
-
-fname = os.path.join(instance_folder, 'sim_summary.json')
-with open(fname, 'w') as fh:
-    json.dump(params, fh)
-""";
 
 
-string to_xml_code =
-"""
-import params2xml
-import json
 
-params = json.loads('%s')
-params['user_parameters.random_seed'] = '%s'
-
-default_settings = '%s'
-xml_out = '%s'
-
-params2xml.params_to_xml(params, default_settings, xml_out)
-""";
 
 string result_template =
 """
@@ -111,20 +76,14 @@ app (void o) make_dir(string dirname) {
     foreach replication in [0:num_replications-1:1] {
       string instance_dir = "%s/instance_%i_%i_%i/" % (turbine_output, algo_iteration, parameter_iteration, replication+1);
       make_dir(instance_dir) => {
-        string instance_settings = instance_dir + "settings.xml";
-        
         file out <instance_dir + "out.txt">;
         file err <instance_dir + "err.txt">;
-        
-        // replication iteration used as a seed
-        string code = to_xml_code % (custom_parameters, replication, default_settings, instance_settings);
-        
-        python_persist(code, "'ignore'") =>
+        string instance_settings = instance_dir + "settings.xml" =>
+        params2xml(custom_parameters, replication, default_settings, instance_settings) =>
         (out,err) = run_model(model_sh, executable, instance_settings, instance_dir) => {
           cell_counts[replication] = get_result(instance_dir);
-          string code_summarize = summarize_sim % (custom_parameters, instance_dir);
-          python_persist(code_summarize, "'ignore'") =>
-          summarize_simulation (summarize_py, instance_dir) =>
+          results2json(custom_parameters, instance_dir) =>
+          summarize_simulation(summarize_py, instance_dir) =>
           rm_dir(instance_dir + "output/");
         }
       }
@@ -135,7 +94,7 @@ app (void o) make_dir(string dirname) {
 }
 
 (void v) loop (location ME, int trials, string executable_model, string settings) {
-    for (boolean b = true, int i = 1;
+  for (boolean b = true, int i = 1;
        b;
        b=c, i = i + 1)
   {
@@ -239,8 +198,8 @@ main() {
   assert(strlen(getenv("PYTHONPATH")) > 0, "Set PYTHONPATH!");
   assert(strlen(emews_root) > 0, "Set EMEWS_PROJECT_ROOT!");
 
-  printf("Running EMEWS");
-  printf("- Using %s (%s) with parameters %s" % (strategy, package, algo_params));
+  printf("Running EMEWS") =>
+  printf("- Using %s (%s) with parameters %s" % (strategy, package, algo_params)) =>
   printf("- Running model %s using template config %s" % (executable, settings));
 
   int rank = string2int(r_ranks[0]);

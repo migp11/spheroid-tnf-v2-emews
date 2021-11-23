@@ -104,4 +104,4 @@ module load python java R/3.4.0 swiftt/1.4.3
 # echo's anything following this to standard out
 set -x
 SWIFT_FILE=swift_run_eqpy.swift
-swift-t -n $PROCS $MACHINE -p -I $EQPY -r $EQPY $EMEWS_PROJECT_ROOT/swift/$SWIFT_FILE $CMD_LINE_ARGS
+swift-t -n $PROCS $MACHINE -p -I $EQPY -I $EMEWS_PROJECT_ROOT/swift/ -r $EQPY $EMEWS_PROJECT_ROOT/swift/$SWIFT_FILE $CMD_LINE_ARGS

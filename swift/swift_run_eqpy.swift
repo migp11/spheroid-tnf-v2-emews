@@ -76,13 +76,10 @@ app (void o) make_dir(string dirname) {
     foreach replication in [0:num_replications-1:1] {
       string instance_dir = "%s/instance_%i_%i_%i/" % (turbine_output, algo_iteration, parameter_iteration, replication+1);
       make_dir(instance_dir) => {
-        
-        
         file out <instance_dir + "out.txt">;
         file err <instance_dir + "err.txt">;
-        
-        // replication iteration used as a seed
-        params2xml(custom_parameters, replication, default_settings, instance_dir) =>
+        string instance_settings = instance_dir + "settings.xml" =>
+        params2xml(custom_parameters, replication, default_settings, instance_settings) =>
         (out,err) = run_model(model_sh, executable, instance_settings, instance_dir) => {
           cell_counts[replication] = get_result(instance_dir);
           results2json(custom_parameters, instance_dir) =>
@@ -97,7 +94,7 @@ app (void o) make_dir(string dirname) {
 }
 
 (void v) loop (location ME, int trials, string executable_model, string settings) {
-    for (boolean b = true, int i = 1;
+  for (boolean b = true, int i = 1;
        b;
        b=c, i = i + 1)
   {
@@ -201,8 +198,8 @@ main() {
   assert(strlen(getenv("PYTHONPATH")) > 0, "Set PYTHONPATH!");
   assert(strlen(emews_root) > 0, "Set EMEWS_PROJECT_ROOT!");
 
-  printf("Running EMEWS");
-  printf("- Using %s (%s) with parameters %s" % (strategy, package, algo_params));
+  printf("Running EMEWS") =>
+  printf("- Using %s (%s) with parameters %s" % (strategy, package, algo_params)) =>
   printf("- Running model %s using template config %s" % (executable, settings));
 
   int rank = string2int(r_ranks[0]);

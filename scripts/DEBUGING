@@ -8,6 +8,8 @@ export PROCS=4
 
 mkdir -p $TURBINE_OUTPUT
 
-swift-t -n $PROCS -p -I ext/EQ-Py -r ext/EQ-Py swift/swift_run_sweep.swift testing data/sweep_tnf_treatment_4.txt -exe=$(pwd)/experiments/testing/tnf-cancer-model -settings=experiments/testing/settings.xml -parameters=data/sweep_tnf_treatment_n4.txt
-swift-t -n $PROCS -p -I ext/EQ-Py -r ext/EQ-Py swift/swift_run_eqpy.swift testing data/deap_tnf_treatment_params.json -strategy=CMA -sigma=1. -seed=1234 -ni=5 -nv=1 -np=10 -exe=$(pwd)/experiments/testing/tnf-cancer-model -settings=experiments/testing/settings.xml -ea_params=experiments/testing/deap_tnf_treatment_params.json
+swift-t -n $PROCS -p -I ext/EQ-Py -I swift -r ext/EQ-Py swift/swift_run_sweep.swift testing data/sweep_tnf_treatment_4.txt -exe=$(pwd)/experiments/testing/tnf-cancer-model -settings=experiments/testing/settings.xml -parameters=data/sweep_tnf_treatment_n4.txt
+
+swift-t -n $PROCS -p -I ext/EQ-Py -I swift -r ext/EQ-Py swift/swift_run_eqpy.swift testing data/deap_tnf_treatment_params.json -strategy=CMA -sigma=1. -seed=1234 -ni=5 -nv=1 -np=10 -exe=$(pwd)/experiments/testing/tnf-cancer-model -settings=experiments/testing/settings.xml -ea_params=experiments/testing/deap_tnf_treatment_params.json
+
 swift-t -n $PROCS -p -I ext/EQ-Py -r ext/EQ-Py swift/swift_run_eqpy.swift testing data/deap_tnf_treatment_params.json -strategy=GA -seed=1234 -ni=5 -nv=1 -np=10 -exe=$(pwd)/experiments/testing/tnf-cancer-model -settings=experiments/testing/settings.xml -ea_params=experiments/testing/deap_tnf_treatment_params.json

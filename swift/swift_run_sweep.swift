@@ -68,36 +68,18 @@ main() {
   foreach params,i in upf_lines {
     foreach replication in [0:num_variations-1:1] {
       string instance_dir = "%s/instance_%i_%i/" % (turbine_output, i+1, replication+1);
-      printf(params);
-      make_dir(instance_dir) => {
-        make_output_dir(instance_dir) => {
-          file out <instance_dir+"out.txt">;
-          file err <instance_dir+"err.txt">;
-          params2xml(params, i, default_xml, instance_dir) =>
-          python_persist(code, "'ignore'") => {
-            (out,err) = run_model(model_sh, executable, xml_out, instance_dir) => {
-              // results[i] = get_result(instance_dir);
-              results[replication] = get_result(instance_dir);
-              results2json(params, instance_dir) =>
-              summarize_simulation (summarize_py, instance_dir) => {
-                rm_dir(instance_dir + "output/");
-              } 
-            }
-          }
+      make_dir(instance_dir) => {        
+        file out <instance_dir+"out.txt">;
+        file err <instance_dir+"err.txt">;
+        string xml_out = instance_dir + "settings.xml" =>
+        params2xml(params, i+replication, default_xml, xml_out) =>
+        (out,err) = run_model(model_sh, executable, xml_out, instance_dir) => {
+          results[replication] = get_result(instance_dir);
+          results2json(params, instance_dir) =>
+          summarize_simulation (summarize_py, instance_dir) =>
+          rm_dir(instance_dir + "output/");
         }
       }
     }
   }
-
-  // string results_str = string_join(results, ",");
-  // string code = find_min % results_str;
-  // string mins = R(code, "toString(res)");
-  // string min_idxs[] = split(mins, ",");
-  // string best_params[];
-  // foreach s, i in min_idxs {
-    // int idx = toint(trim(s));
-    // best_params[i] = upf_lines[idx - 1];
-  // }
-  //file best_out <turbine_output + "/output/best_parameters.txt"> =
-  //  write(string_join(best_params, "\n"));
 }

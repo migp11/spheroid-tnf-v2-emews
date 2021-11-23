@@ -20,8 +20,10 @@ if os.path.exists(fname):
 
     params['initial_cell_count'] = lines[0].split("\t")[1]
     params['final_cell_count'] = lines[-1].split("\t")[1]
-
-    line_pieces = instance_folder.split("_")
+    run_info = instance_folder.rstrip("/")
+    run_info = run_info.split("/")
+    line_pieces = run_info[-1].split("_")
+    print(line_pieces)
     if len(line_pieces)>3:
         iteration, ind, rep = line_pieces[1:]
         params["individual"] = ind
@@ -36,10 +38,12 @@ fname = os.path.join(instance_folder, 'sim_summary.json')
 with open(fname, 'w') as fh:
     json.dump(params, fh)
 """;
-(void o) results2json(string parameters, string instance_dir)
+
+(void v) results2json(string parameters, string instance_dir)
 {
+    v = make_void();
     string code_summarize = summarize_sim % (parameters, instance_dir);
-    python_persist(code_summarize, "'ignore'")
+    python_persist(code_summarize, "'ignore'");
 }
 
 
@@ -58,8 +62,9 @@ xml_out = '%s'
 params2xml.params_to_xml(params, default_settings, xml_out)
 """;
 
-(void o) params2xml(string parameters, int replication, string default_settings, string instance_dir){
-    string instance_settings = instance_dir + "settings.xml";
+(void v) params2xml(string parameters, int replication, string default_settings, string instance_settings)
+{
+    v = make_void();
     string code = to_xml_code % (parameters, replication, default_settings, instance_settings);
-    python_persist(code, "'ignore'")
+    python_persist(code, "'ignore'");
 }

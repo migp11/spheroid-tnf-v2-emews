@@ -8,6 +8,30 @@ import python;
 string emews_root = getenv("EMEWS_PROJECT_ROOT");
 string turbine_output = getenv("TURBINE_OUTPUT");
 
+string summarize_sim = 
+"""
+import os
+import json
+
+params = json.loads('%s')
+instance_folder = '%s'
+
+params['initial_cell_count'] =  -1
+params['final_cell_count'] = -1
+fname = os.path.join(instance_folder, 'metrics.txt')
+if os.path.exists(fname):
+    file_lines = []
+    with open(fname) as fh:
+        lines = [i.rstrip() for i in fh.readlines()]
+
+    params['initial_cell_count'] = lines[0].split("\t")[1]
+    params['final_cell_count'] = lines[-1].split("\t")[1]
+
+fname = os.path.join(instance_folder, 'sim_summary.json')
+with open(fname, 'w') as fh:
+    json.dump(params, fh)
+""";
+
 string to_xml_code =
 """
 import params2xml
@@ -68,6 +92,7 @@ main() {
 
   string executable = argv("exe");
   string default_xml = argv("settings");
+  int num_variations = toint(argv("nv", "3"));
 
   file model_sh = input(emews_root + "/scripts/growth_model.sh");
   file upf = input(argv("parameters"));
@@ -76,20 +101,26 @@ main() {
   string results[];
   string upf_lines[] = file_lines(upf);
   foreach params,i in upf_lines {
-    string instance_dir = "%s/instance_%i/" % (turbine_output, i+1);
-    printf(params);
-    make_dir(instance_dir) => {
-      make_output_dir(instance_dir) => {
-        string xml_out = instance_dir + "settings.xml";
-        string code = to_xml_code % (params, i, default_xml, xml_out);
-        file out <instance_dir+"out.txt">;
-        file err <instance_dir+"err.txt">;
-        python_persist(code, "'ignore'") => {
-          (out,err) = run_model(model_sh, executable, xml_out, instance_dir) => {
-            // results[i] = get_result(instance_dir);
-            summarize_simulation (summarize_py, instance_dir) => {
-              rm_dir(instance_dir + "output/");
-            } 
+    foreach replication in [0:num_variations-1:1] {
+      string instance_dir = "%s/instance_%i_%i/" % (turbine_output, i+1, replication+1);
+      printf(params);
+      make_dir(instance_dir) => {
+        make_output_dir(instance_dir) => {
+          string xml_out = instance_dir + "settings.xml";
+          string code = to_xml_code % (params, i, default_xml, xml_out);
+          file out <instance_dir+"out.txt">;
+          file err <instance_dir+"err.txt">;
+          python_persist(code, "'ignore'") => {
+            (out,err) = run_model(model_sh, executable, xml_out, instance_dir) => {
+              // results[i] = get_result(instance_dir);
+              results[replication] = get_result(instance_dir);
+              string code_summarize = summarize_sim % (
+              params, instance_dir);
+              python_persist(code_summarize, "'ignore'") =>
+              summarize_simulation (summarize_py, instance_dir) => {
+                rm_dir(instance_dir + "output/");
+              } 
+            }
           }
         }
       }

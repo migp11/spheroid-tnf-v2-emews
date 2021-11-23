@@ -13,10 +13,15 @@ def main():
         params = json.load(fh)
 
     line_pieces = instance_folder.split("_")
-    iteration, ind, rep = line_pieces[1:]
-    params["individual"] = ind
-    params["iteration"] = iteration
-    params["replicate"] = rep
+    if len(line_pieces)>3:
+        iteration, ind, rep = line_pieces[1:]
+        params["individual"] = ind
+        params["iteration"] = iteration
+        params["replicate"] = rep
+    else:
+        ind, rep = line_pieces[1:]
+        params["individual"] = ind
+        params["replicate"] = rep
     
     print(json.dumps(params))
 

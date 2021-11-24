@@ -54,17 +54,19 @@ import params2xml
 import json
 
 params = json.loads('%s')
+print(params)
 params['user_parameters.random_seed'] = '%s'
 
 default_settings = '%s'
 xml_out = '%s'
 
 params2xml.params_to_xml(params, default_settings, xml_out)
+print(f'saving params to {xml_out}')
 """;
 
-(void v) params2xml(string parameters, int replication, string default_settings, string instance_settings)
+(void v) params2xml(string parameters, int seed, string default_settings, string instance_settings)
 {
-    v = make_void();
-    string code = to_xml_code % (parameters, replication, default_settings, instance_settings);
+    string code = to_xml_code % (parameters, seed, default_settings, instance_settings);
     python_persist(code, "'ignore'");
+    v = make_void();
 }

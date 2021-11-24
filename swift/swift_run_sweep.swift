@@ -74,9 +74,9 @@ main() {
         string instance_settings = instance_dir + "settings.xml" =>
         params2xml(params, i+replication, default_xml, instance_settings) =>
         (out,err) = run_model(model_sh, executable, instance_settings, instance_dir) => {
-          results[replication] = get_result(instance_dir);
-          results2json(params, instance_dir) =>
-          summarize_simulation (summarize_py, instance_dir) =>
+          results[replication] = get_result(instance_dir) =>
+          results2json(custom_parameters, instance_dir) =>
+          summarize_simulation(summarize_py, instance_dir) =>
           rm_dir(instance_dir + "output/");
         }
       }

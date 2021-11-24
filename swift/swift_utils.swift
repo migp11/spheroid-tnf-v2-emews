@@ -4,6 +4,7 @@ import python;
 
 string summarize_sim = 
 """
+import sys
 import os
 import json
 
@@ -34,9 +35,12 @@ if os.path.exists(fname):
         params["individual"] = ind
         params["replicate"] = rep
 
-fname = os.path.join(instance_folder, 'sim_summary.json')
-with open(fname, 'w') as fh:
-    json.dump(params, fh)
+    fname = os.path.join(instance_folder, 'sim_summary.json')
+    with open(fname, 'w') as fh:
+        json.dump(params, fh)
+else:
+    print(f"Can't find {fname} file")
+    sys.exit(1)
 """;
 
 (void v) results2json(string parameters, string instance_dir)

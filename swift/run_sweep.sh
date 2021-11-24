@@ -44,7 +44,7 @@ export TURBINE_JOBNAME="${EXPID}_job"
 # export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$R_HOME/lib
 # if python packages can't be found, then uncommited and set this
 # export PYTHONPATH=/path/to/python/packages
-export PYTHONPATH=$EMEWS_PROJECT_ROOT/python
+export PYTHONPATH=$PYTHONPATH:$EMEWS_PROJECT_ROOT/python
 
 
 # TODO edit command line arguments as appropriate

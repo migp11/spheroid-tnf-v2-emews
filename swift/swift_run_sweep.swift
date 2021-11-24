@@ -71,9 +71,9 @@ main() {
       make_dir(instance_dir) => {        
         file out <instance_dir+"out.txt">;
         file err <instance_dir+"err.txt">;
-        string xml_out = instance_dir + "settings.xml" =>
-        params2xml(params, i+replication, default_xml, xml_out) =>
-        (out,err) = run_model(model_sh, executable, xml_out, instance_dir) => {
+        string instance_settings = instance_dir + "settings.xml" =>
+        params2xml(params, i+replication, default_xml, instance_settings) =>
+        (out,err) = run_model(model_sh, executable, instance_settings, instance_dir) => {
           results[replication] = get_result(instance_dir);
           results2json(params, instance_dir) =>
           summarize_simulation (summarize_py, instance_dir) =>

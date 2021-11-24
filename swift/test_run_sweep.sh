@@ -68,7 +68,7 @@ cp $PARAMS_FILE_SOURCE $PARAMS_FILE_OUT
 
 cp -r $EMEWS_PROJECT_ROOT/data/boolean_network $TURBINE_OUTPUT
 
-REP=3
+REP=1
 
 CMD_LINE_ARGS="$* -nv=$REP -exe=$EXE_OUT -settings=$SETTINGS_OUT -parameters=$PARAMS_FILE_OUT"
 

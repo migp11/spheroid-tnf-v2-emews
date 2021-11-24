@@ -45,9 +45,9 @@ else:
 
 (void v) results2json(string parameters, string instance_dir)
 {
-    v = make_void();
     string code_summarize = summarize_sim % (parameters, instance_dir);
-    python_persist(code_summarize, "'ignore'");
+    python_persist(code_summarize, "'ignore'") =>
+    v = propagate();
 }
 
 
@@ -71,6 +71,6 @@ print(f'saving params to {xml_out}')
 (void v) params2xml(string parameters, int seed, string default_settings, string instance_settings)
 {
     string code = to_xml_code % (parameters, seed, default_settings, instance_settings);
-    python_persist(code, "'ignore'");
-    v = make_void();
+    python_persist(code, "'ignore'") =>
+    v = propagate();
 }

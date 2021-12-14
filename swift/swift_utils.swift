@@ -21,19 +21,23 @@ if os.path.exists(fname):
 
     params['initial_cell_count'] = lines[0].split("\t")[1]
     params['final_cell_count'] = lines[-1].split("\t")[1]
+    
     run_info = instance_folder.rstrip("/")
     run_info = run_info.split("/")
     line_pieces = run_info[-1].split("_")
     print(line_pieces)
-    if len(line_pieces)>3:
+    if len(line_pieces) == 3:
         iteration, ind, rep = line_pieces[1:]
         params["individual"] = ind
         params["iteration"] = iteration
         params["replicate"] = rep
-    else:
+    elif len(line_pieces) == 2:
         ind, rep = line_pieces[1:]
         params["individual"] = ind
         params["replicate"] = rep
+    else:
+        print(f"Can't find {fname} file")
+        sys.exit(1)
 
     fname = os.path.join(instance_folder, 'sim_summary.json')
     with open(fname, 'w') as fh:

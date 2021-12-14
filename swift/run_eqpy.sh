@@ -98,6 +98,8 @@ USER_VARS=()
 # log variables and script to to TURBINE_OUTPUT directory
 log_script
 
+module load python java R/3.4.0 swiftt/1.4.3
+
 # echo's anything following this to standard out
 set -x
 SWIFT_FILE=swift_run_eqpy.swift

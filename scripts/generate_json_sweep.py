@@ -24,7 +24,7 @@ def create_parser():
     parser.add_argument("param_json", action="store", help="JSON file having param name as key and a dic with ref values")
     parser.add_argument("--out", action="store", help="output name", default=None)
     parser.add_argument("--mode", action="store", help="Sampling mode", choices=MODES, default='grid')
-    parser.add_argument("--size", action="store", type=int, help="Total values for each parameter")
+    parser.add_argument("--size", action="store", type=int, help="Total values for each parameter (in uniform mode, the total number of points)")
     return parser
 
 
@@ -38,14 +38,14 @@ def main():
 
     grid = {}
     if args.mode == "uniform":
-        for i in range(args.size**len(params.items())):
+        for i in range(args.size):
             for k,v in params.items():
                 grid[k] = uniform(v['min'], v['max'])
                 ####  If we wish to plot the points
                 # mypoints[k].append(grid[k])
                 ####
             if args.out is not None:
-                with open(args.out, 'w') as fh:
+                with open(args.out, 'a') as fh:
                     print(json.dumps(grid), file=fh)
             else:
                 print(json.dumps(grid))

@@ -6,18 +6,28 @@ import xml.dom.minidom
 
 def main():
     instance_folder  = sys.argv[1]
-
+    if len(sys.argv) == 3:
+        noise_param = sys.argv[2]
+    else:
+        noise_param = None
     params = {}
     line_pieces = instance_folder.split("_")
-    iteration, ind, rep = line_pieces[1:]
-    
-    params["individual"] = ind
-    params["iteration"] = iteration
-    params["replicate"] = rep
+
+    if len(line_pieces) == 3: 
+        iteration, rep = line_pieces[1:]
+        params["iteration"] = iteration
+        params["replicate"] = rep
+    elif len(line_pieces) == 4: 
+        iteration, ind, rep = line_pieces[1:]
+        params["individual"] = ind
+        params["iteration"] = iteration
+        params["replicate"] = rep
 
     doc = xml.dom.minidom.parse(os.path.join(instance_folder,"settings.xml"))
     
     list_of_params = ["time_add_tnf", "duration_add_tnf", "concentration_tnf"]
+    if noise_param:
+        list_of_params.append(noise_param)
     for i in list_of_params:
         custom_data = doc.getElementsByTagName(i)
         node = custom_data[0]

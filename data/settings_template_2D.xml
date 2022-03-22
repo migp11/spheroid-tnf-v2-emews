@@ -247,17 +247,17 @@
 		<maboss_time_step type="double" units="dimensionless">10.</maboss_time_step>
 
 		<!-- <TNFR_binding_rate_std type="double" units="dimensionless" description="TNF receptor binding rate std">0.237</TNFR_binding_rate_std> -->
-		<TNFR_binding_rate_std type="double" units="dimensionless" description="TNF receptor binding rate std">0.0</TNFR_binding_rate_std>
+		<TNFR_binding_rate_std type="double" units="dimensionless" description="TNF receptor binding rate std">0.1</TNFR_binding_rate_std>
 		<TNFR_binding_rate_min type="double" units="dimensionless" description="TNF receptor binding rate min">0.05</TNFR_binding_rate_min>
 		<TNFR_binding_rate_max type="double" units="dimensionless" description="TNF receptor binding rate max">0.95</TNFR_binding_rate_max>
 
 		<!-- <TNFR_endocytosis_rate_std type="double" units="dimensionless" description="TNF receptor-TNF endocytosis rate std">0.237</TNFR_endocytosis_rate_std> -->
-		<TNFR_endocytosis_rate_std type="double" units="dimensionless" description="TNF receptor-TNF endocytosis rate std">0.0</TNFR_endocytosis_rate_std>
+		<TNFR_endocytosis_rate_std type="double" units="dimensionless" description="TNF receptor-TNF endocytosis rate std">0.1</TNFR_endocytosis_rate_std>
 		<TNFR_endocytosis_rate_min type="double" units="dimensionless" description="TNF receptor-TNF endocytosis rate min">0.05</TNFR_endocytosis_rate_min>
 		<TNFR_endocytosis_rate_max type="double" units="dimensionless" description="TNF receptor-TNF endocytosis rate max">0.95</TNFR_endocytosis_rate_max>
 
 		<!-- <TNFR_recycling_rate_std type="double" units="dimensionless" description="TNF receptor recycling std">0.237</TNFR_recycling_rate_std> -->
-		<TNFR_recycling_rate_std type="double" units="dimensionless" description="TNF receptor recycling std">0.0</TNFR_recycling_rate_std>
+		<TNFR_recycling_rate_std type="double" units="dimensionless" description="TNF receptor recycling std">0.1</TNFR_recycling_rate_std>
 		<TNFR_recycling_rate_min type="double" units="dimensionless" description="TNF receptor recycling min">0.05</TNFR_recycling_rate_min>
 		<TNFR_recycling_rate_max type="double" units="dimensionless" description="TNF receptor recycling max">0.95</TNFR_recycling_rate_max>
 

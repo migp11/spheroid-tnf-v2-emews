@@ -1,0 +1,23 @@
+[
+    {
+        "name" : "user_parameters.time_add_tnf",
+        "type" : "int",
+        "lower" : 100,
+        "upper" : 700,
+        "sigma": 90
+    },    
+    {
+        "name" : "user_parameters.duration_add_tnf",
+        "type" : "int",
+        "lower" : 5,
+        "upper" : 90,
+        "sigma": 20
+    },    
+    {
+        "name" : "user_parameters.concentration_tnf",
+        "type" : "float",
+        "lower" : 0.01,
+        "upper" : 1.0,
+        "sigma": 0.1
+    }
+]

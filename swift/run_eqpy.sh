@@ -21,13 +21,13 @@ export TURBINE_OUTPUT=$EMEWS_PROJECT_ROOT/experiments/$EXPID
 check_directory_exists
 
 # TODO edit the number of processes as required.
-export PROCS=60
+export PROCS=36
 
 # TODO edit QUEUE, WALLTIME, PPN, AND TURNBINE_JOBNAME
 # as required. Note that QUEUE, WALLTIME, PPN, AND TURNBINE_JOBNAME will
 # be ignored if MACHINE flag (see below) is not set
 export QUEUE=main
-export WALLTIME=24:00:00
+export WALLTIME=48:00:00
 export PPN=12
 export TURBINE_JOBNAME="${EXPID}_job"
 
@@ -55,7 +55,7 @@ mkdir -p $TURBINE_OUTPUT
 
 ALGO_PARAMS_FILE_SOURCE=$2
 EXE_SOURCE=$EMEWS_PROJECT_ROOT/model/tnf-cancer-model
-SETTINGS_SOURCE=$EMEWS_PROJECT_ROOT/data/settings_template_2D.xml
+SETTINGS_SOURCE=$EMEWS_PROJECT_ROOT/data/settings_template_3D.xml
 
 EXE_OUT=$TURBINE_OUTPUT/`basename $EXE_SOURCE`
 SETTINGS_OUT=$TURBINE_OUTPUT/settings.xml
@@ -73,9 +73,8 @@ REP=3
 POP=100
 SIGMA=1
 
-#STRATEGY="CMA"
-
-STRATEGY="GA"
+STRATEGY="CMA"
+#STRATEGY="GA"
 
 
 CMD_LINE_ARGS="$* -strategy=$STRATEGY -sigma=$SIGMA -seed=$SEED -ni=$ITER -nv=$REP -np=$POP -exe=$EXE_OUT -settings=$SETTINGS_OUT -ea_params=$ALGO_PARAMS_FILE_OUT"

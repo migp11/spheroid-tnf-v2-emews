@@ -2,9 +2,9 @@
 
 set -eu
 
-if [ "$#" -ne 2 ]; then
+if [ "$#" -ne 3 ]; then
   script_name=$(basename $0)
-  echo "Usage: ${script_name} EXPERIMENT_ID INPUT (e.g. ${script_name} experiment_1 data/input.txt)"
+  echo "Usage: ${script_name} EXPERIMENT_ID INPUT SETTINGS_XML (e.g. ${script_name} exp_1 data/input.txt data/settings_template_3D.xml)"
   exit 1
 fi
 
@@ -21,14 +21,14 @@ export TURBINE_OUTPUT=$EMEWS_PROJECT_ROOT/experiments/$EXPID
 check_directory_exists
 
 # TODO edit the number of processes as required.
-export PROCS=720
-# export PROCS=36
+# export PROCS=720
+export PROCS=48
 
 # TODO edit QUEUE, WALLTIME, PPN, AND TURNBINE_JOBNAME
 # as required. Note that QUEUE, WALLTIME, PPN, AND TURNBINE_JOBNAME will
 # be ignored if the MACHINE variable (see below) is not set.
 export QUEUE=main
-export WALLTIME=72:00:00
+export WALLTIME=36:00:00
 #export WALLTIME=1:59:00
 export PPN=12
 export TURBINE_JOBNAME="${EXPID}_job"
@@ -52,9 +52,10 @@ export PYTHONPATH=$PYTHONPATH:$EMEWS_PROJECT_ROOT/python
 # command line arguments to the swift script.
 mkdir -p $TURBINE_OUTPUT
 
-PARAMS_FILE_SOURCE=$2
+PARAMS_FILE_SOURCE=`realpath $2`
+SETTINGS_SOURCE=`realpath $3`
+# SETTINGS_SOURCE=$EMEWS_PROJECT_ROOT/data/settings_template_3D.xml
 EXE_SOURCE=$EMEWS_PROJECT_ROOT/model/tnf-cancer-model
-SETTINGS_SOURCE=$EMEWS_PROJECT_ROOT/data/settings_template_2D.xml
 
 EXE_OUT=$TURBINE_OUTPUT/`basename $EXE_SOURCE`
 SETTINGS_OUT=$TURBINE_OUTPUT/settings.xml
@@ -85,6 +86,8 @@ fi
 USER_VARS=()
 # log variables and script to to TURBINE_OUTPUT directory
 log_script
+
+module load python java R/3.4.0 swiftt/1.4.3
 
 # echo's anything following this standard out
 set -x

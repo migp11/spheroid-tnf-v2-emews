@@ -23,7 +23,7 @@ void tnf_receptor_model_setup()
     tnf_receptor_info.cell_variables.push_back( "TNFR_binding_rate" ); 
 	tnf_receptor_info.cell_variables.push_back( "TNFR_endocytosis_rate" );
     tnf_receptor_info.cell_variables.push_back( "TNFR_recycling_rate" );
-	tnf_receptor_info.cell_variables.push_back( "TFN_net_production_rate" );
+	tnf_receptor_info.cell_variables.push_back( "TNF_net_production_rate" );
 
 	tnf_receptor_info.register_model();
 

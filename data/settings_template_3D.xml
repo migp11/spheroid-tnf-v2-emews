@@ -221,7 +221,7 @@
 				<TNFR_recycling_rate type="double" units="1/min" description="TNF receptor recycling">0.6</TNFR_recycling_rate>
 				<TNFR_activation_threshold type="double" units="" description="TNFR threshold to update booleano model input">0.5</TNFR_activation_threshold>
 				<TNFR_receptors_per_cell type="double" units="dimensionless" description="number of TNFR receptors per cell">1.0</TNFR_receptors_per_cell>
-				<TFN_net_production_rate type="double" units="TNF/cell/min" description="The total TNF produced by the cell when NFkB is active">0</TFN_net_production_rate> <!-- 0.5 ng/mL -->
+				<TNF_net_production_rate type="double" units="TNF/cell/min" description="The total TNF produced by the cell when NFkB is active">0</TNF_net_production_rate> <!-- 0.5 ng/mL -->
 
 				<!-- Auxiliary variables used to monitorize simulation-->
 				<tnf_node units="dimensionless">0</tnf_node>

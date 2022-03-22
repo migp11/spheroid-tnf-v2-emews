@@ -11,7 +11,7 @@ The emergence of cell resistance in cancer treatment is a complex phenomenon tha
 
 ## EMEWS Workflow for model exploration of treatment strategies
 
-This repository contains the code for the multi-scale model and the EMEWS-based model exploration exploration  workflow
+This repository contains the code for the multi-scale model and the EMEWS-based model exploration workflow
 
 Note: This project is compatible with swift-t v. 1.3+. Earlier versions will NOT work.
 
@@ -47,12 +47,12 @@ The directories are intended to contain the following:
 
 `Usage: run_sweep.sh EXPERIMENT_ID INPUT SETTINGS_XML (e.g. run_sweep.sh exp_1 data/input.txt data/settings_template_3D.xml)`
 
-This shell scripts is a wrapper to lunch the model exploration workflow based on the sweep search (`swift_run_sweep.swift`)
+This shell script is a wrapper to lunch the model exploration workflow based on the sweep search (`swift_run_sweep.swift`)
 
 Sweep experiments require three parameters.:
 
  - `EXPERIMENT_ID`: this is the name of the folder where the results will be stored `experiments/EXPERIMENT_ID`
- - `INPUT`: is a txt file where each line correspond to a JSON dictionary where the keys must be a correct path to a model parameter in the XML config file: 
+ - `INPUT`: is a .txt file where each line corresponds to a JSON dictionary where the keys must be a correct path to a model parameter in the XML config file: 
 ^
     <br>
     `{ "user_parameters.duration_add_tnf": 5.2, "user_parameters.concentration_tnf": 0.14, "user_parameters.time_add_tnf": 420.0}`
@@ -64,7 +64,7 @@ Sweep experiments require three parameters.:
 The sweep will iterate over all the provided parameters and run the simulation distributed according to the resources assigned in the `run_sweep.sh`:
 
  - `PROCS=48`: is the total number of CPUs assigned to the job.
- - `PPN=12`: the total number of siulation per computing node. Since PhysiBoSS is configured to use 4 threads (see settings_template_3D.xml) and each MN4 has 48 cpu, we can allocate 12 PhysiBoSS instances in each ode
+ - `PPN=12`: the total number of simulations per computing node of the HPC cluster. Since PhysiBoSS is configured to use 4 threads (see settings_template_3D.xml) and each MN4 has 48 cpu, we can allocate 12 PhysiBoSS instances in each ode
 
 ### How to run GA/CMA-ES
 
@@ -73,7 +73,7 @@ The sweep will iterate over all the provided parameters and run the simulation d
  - `EXPERIMENT_ID`: this is the name of the folder where the results will be stored `experiments/EXPERIMENT_ID`
  - `EA_PARAMS_FILE`: is a json file containing the parameters or decision variable to optimize. It also includes the sigma for the sampling and bounds for the values.
 
-This shell scripts is a wrapper to lunch the model exploration workflow based on evolutionary algorithms (`swift_run_eqpy.swift`)
+This shell script is a wrapper to lunch the model exploration workflow based on evolutionary algorithms (`swift_run_eqpy.swift`)
 
 Parameter regarding the population size, number of iterations (generations), replicates and population size should be modified inside `run_eqpy.sh`
 
@@ -87,7 +87,7 @@ Parameter regarding the population size, number of iterations (generations), rep
 In the case of the GA the default parameters for the `mutation` and `crossover` are `0.2` and `0.5`, respectively. To change those values or other 
 parameters of the GA the user should modify the file `python/deap_ga.py`
 
-In the case of the CMA-ES user should modify the file `python/deap_cma.py` to change parameter such as centroids of the initial population.s
+In the case of the CMA-ES user should modify the file `python/deap_cma.py` to change parameters such as centroids of the initial population.
 
 ## The model
 
